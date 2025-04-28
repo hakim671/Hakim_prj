@@ -69,9 +69,27 @@ if page == "📈 Презентация модели":
     st.pyplot(fig)
 
 elif page == "🔮 Прогнозирование":
+    model = Prophet(daily_seasonality=False, yearly_seasonality=False, changepoint_prior_scale=0.001, n_changepoints=7)
+    model.fit(df_prophet)
+
+    # Создание прогноза
+    future = model.make_future_dataframe(periods=w_hours, freq='D', include_history=False)
+    forecast = model.predict(future)
     st.title("🔮 Прогнозирование курса сомони/доллар")
 
     st.write("Модель предсказывает курс на 120 дней вперед.")
+
+    st.subheader("Выберите день для прогноза")
+
+    # Ползунок для выбора дня
+    day_selected = st.slider("День прогноза", min_value=1, max_value=w_hours, value=1)
+
+    # Получение прогноза на выбранный день
+    selected_forecast = forecast.iloc[day_selected - 1]  # -1, потому что индексация с нуля
+
+    st.write(f"### Прогноз на день {day_selected}:")
+    st.metric(label="Прогнозируемый курс", value=f"{selected_forecast['yhat']:.2f} сомони")
+    st.caption(f"Диапазон от {selected_forecast['yhat_lower']:.2f} до {selected_forecast['yhat_upper']:.2f} сомони")
 
     st.subheader("График прогноза")
     fig2 = model.plot(forecast)
