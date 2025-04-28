@@ -7,6 +7,8 @@ from prophet import Prophet
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 
+st.set_page_config(page_title="Прогноз курса сомони/доллар", layout="wide")
+
 # Загрузка данных
 @st.cache_data
 def load_data():
@@ -42,9 +44,6 @@ forecast = model.predict(future)
 val_actual = val_pr['y'].values
 val_pred = forecast['yhat'].values
 model_rmse = rmse(val_actual, val_pred)
-
-# Интерфейс Streamlit
-st.set_page_config(page_title="Прогноз курса сомони/доллар", layout="wide")
 
 st.sidebar.title("Меню")
 page = st.sidebar.radio("Выберите страницу", ["📈 Презентация модели", "🔮 Прогнозирование"])
