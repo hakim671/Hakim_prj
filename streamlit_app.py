@@ -88,8 +88,8 @@ elif page == "🔮 Прогнозирование":
     selected_forecast = forecast.iloc[day_selected - 1]  # -1, потому что индексация с нуля
 
     st.write(f"### Прогноз на день {day_selected}:")
-    st.metric(label="Прогнозируемый курс", value=f"{selected_forecast['yhat']:.2f} сомони")
-    st.caption(f"Диапазон от {selected_forecast['yhat_lower']:.2f} до {selected_forecast['yhat_upper']:.2f} сомони")
+    st.metric(label="Прогнозируемый курс", value=f"{selected_forecast['yhat']:.4f} сомони")
+    st.caption(f"Диапазон от {selected_forecast['yhat_lower']:.4f} до {selected_forecast['yhat_upper']:.4f} сомони")
 
     st.subheader("График прогноза")
     fig2 = model.plot(forecast)
