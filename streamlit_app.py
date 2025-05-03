@@ -9,23 +9,6 @@ from math import sqrt
 
 st.set_page_config(page_title="Прогноз курса сомони/доллар", layout="wide")
 
-st.markdown("""
-    <style>
-    .main {
-        background-color: #f5f5f5;
-    }
-    .stApp {
-        background-color: #ffffff;
-    }
-    h1 {
-        color: #003366;
-    }
-    .css-1aumxhk {
-        background-color: #e0f7fa !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 # Загрузка данных
 @st.cache_data
 def load_data():
@@ -67,6 +50,10 @@ page = st.sidebar.radio("Выберите страницу", ["📈 Презен
 
 if page == "📈 Презентация модели":
     st.title("📈 Прогноз курса сомони/доллар")
+    st.write("""Датасет: 
+                    Источник: investing.com
+                    Длина: 1339
+                    Дата: от 2020 до 2025""")
     st.write("""
     Модель основана на библиотеке **Prophet** от Facebook.
     
