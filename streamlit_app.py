@@ -9,6 +9,23 @@ from math import sqrt
 
 st.set_page_config(page_title="Прогноз курса сомони/доллар", layout="wide")
 
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f5f5f5;
+    }
+    .stApp {
+        background-color: #ffffff;
+    }
+    h1 {
+        color: #003366;
+    }
+    .css-1aumxhk {
+        background-color: #e0f7fa !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Загрузка данных
 @st.cache_data
 def load_data():
