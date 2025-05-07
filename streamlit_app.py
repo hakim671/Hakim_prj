@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from prophet import Prophet
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+from statsmodels.tsa.arima.model import ARIMA
+
 
 st.set_page_config(page_title="Прогноз курса сомони/доллар", layout="wide")
 
@@ -120,7 +122,7 @@ elif page == 'Сравнение моделей':
     forecast = model.predict(future)
     selected_forecast = forecast.iloc[day_selected - 1]
 
-    model = sm.tsa.arima.ARIMA(df.Price, order = (8, 0, 9))
+    model = ARIMA(df['Price'], order=(8, 0, 9))
     result = model.fit()
     preds = result.predict(dynamic=False)
     selected_pred = preds.iloc[day_selected - 1]
