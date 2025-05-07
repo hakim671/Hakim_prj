@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 from math import sqrt
 from statsmodels.tsa.arima.model import ARIMA
 
-st.set_page_config(page_title="💵 Прогноз курса сомони/доллар", layout="wide")
+st.set_page_config(page_title="💵 Прогнозик курса сомони/доллар", layout="wide")
 
 # Загрузка данных
 @st.cache_data
