@@ -126,8 +126,11 @@ elif page == 'Сравнение моделей':
     # Прогноз с использованием ARIMA
     arima_model = ARIMA(df['Price'], order=(8, 0, 9))
     arima_result = arima_model.fit()
-    arima_preds = arima_result.predict()
-    selected_pred = arima_preds.iloc[day_selected - 1]
+    forecast = result.forecast(steps=120)
+    last_date = df.index[0]
+    future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=120)
+    forecast_arima = pd.Series(forecast, index=future_dates)
+    selected_pred = forecast_arima.iloc[day_selected - 1]
 
     # Вывод прогнозов на выбранный день
     st.subheader(f"Прогноз на день {day_selected}")
@@ -138,7 +141,7 @@ elif page == 'Сравнение моделей':
     st.subheader("Сравнение всех прогнозов")
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(forecast['ds'], forecast['yhat'], label='Prophet', color='blue')
-    ax.plot(df.index[:120], arima_preds[:120], label='ARIMA', color='orange')
+    ax.plot(forecast_arima.index, arima_preds, label='ARIMA', color='orange')
     ax.set_xlabel('Дата')
     ax.set_ylabel('Цена')
     ax.legend()
