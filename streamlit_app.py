@@ -138,7 +138,7 @@ elif page == 'Сравнение моделей':
     st.subheader("Сравнение всех прогнозов")
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(forecast['ds'], forecast['yhat'], label='Prophet', color='blue')
-    ax.plot(df.index[:len(arima_preds)], arima_preds, label='ARIMA', color='orange')
+    ax.plot(df.index[:len(arima_preds)], arima_preds[-120:], label='ARIMA', color='orange')
     ax.set_xlabel('Дата')
     ax.set_ylabel('Цена')
     ax.legend()
