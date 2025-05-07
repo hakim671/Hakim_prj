@@ -56,7 +56,6 @@ if page == "📈 Презентация модели":
         - **Длина:** 1339
         - **Дата:** от 2020 до 2025
     """)
-    st.write(df)
     st.write("""
     Модель основана на библиотеке **Prophet** от Facebook.
     
@@ -90,7 +89,7 @@ elif page == "🔮 Прогнозирование":
 
     # Ползунок для выбора дня
     day_selected = st.slider("День прогноза", min_value=1, max_value=w_hours, value=1)
-    if day_selected >= 90:
+    if day_selected >= 60:
         st.warning("⚠️ Для такого длительного промежутка прогноз модели может быть менее точным.")
 
     # Получение прогноза на выбранный день
@@ -112,3 +111,31 @@ elif page == "🔮 Прогнозирование":
         'yhat_upper': 'Верхняя граница'
     }))
 
+elif page == 'Сравнение моделей':
+    day_selected = st.slider("День прогноза", min_value=1, max_value=w_hours, value=1)
+    
+    model = Prophet(daily_seasonality=False, yearly_seasonality=False, changepoint_prior_scale=0.001, n_changepoints=7)
+    model.fit(df_prophet)
+    future = model.make_future_dataframe(periods=w_hours, freq='D', include_history=False)
+    forecast = model.predict(future)
+    selected_forecast = forecast.iloc[day_selected - 1]
+
+    model = sm.tsa.arima.ARIMA(df.Price, order = (8, 0, 9))
+    result = model.fit()
+    preds = result.predict(dynamic=False)
+    selected_pred = preds.iloc[day_selected - 1]
+
+        # Отображаем выбранные значения
+    st.subheader(f"Прогноз на день {day_selected}")
+    st.write("**Prophet:**", round(selected_forecast['yhat'], 2))
+    st.write("**ARIMA:**", round(selected_pred, 2))
+
+    # Визуализация всего прогноза для сравнения
+    st.subheader("Сравнение всех прогнозов")
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(forecast['ds'], forecast['yhat'], label='Prophet', color='blue')
+    ax.plot(df.index[:len(preds)], preds, label='ARIMA', color='orange')
+    ax.set_xlabel('Дата')
+    ax.set_ylabel('Цена')
+    ax.legend()
+    st.pyplot(fig)
