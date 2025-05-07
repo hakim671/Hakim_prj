@@ -41,7 +41,7 @@ model_rmse = rmse(val_actual, val_pred)
 
 # Боковое меню
 st.sidebar.title("📌 Меню")
-page = st.sidebar.radio("Выберите страницу", ["📈 Презентация модели", "🔮 Прогнозирование", "📊 Сравнение моделей"])
+page = st.sidebar.radio("Выберите страницу", ["📈 Презентация модели", "🔮 Прогнозирование"])
 
 # Страница 1: Презентация модели
 if page == "📈 Презентация модели":
@@ -90,6 +90,10 @@ elif page == "🔮 Прогнозирование":
     fig2 = model.plot(forecast)
     st.pyplot(fig2)
 
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], name='Prophet', line=dict(color='royalblue')))
+    st.plotly_chart(fig, use_container_width=True)
+    
     st.subheader("📋 Таблица прогноза")
     st.dataframe(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].rename(columns={
         'ds': 'Дата',
@@ -97,40 +101,3 @@ elif page == "🔮 Прогнозирование":
         'yhat_lower': 'Нижняя граница',
         'yhat_upper': 'Верхняя граница'
     }))
-
-# Страница 3: Сравнение моделей
-elif page == "📊 Сравнение моделей":
-    st.title("📊 Сравнение моделей: Prophet vs ARIMA")
-
-    df.set_index('Date', inplace=True)
-    prophet_model = Prophet(daily_seasonality=False, yearly_seasonality=False,
-                            changepoint_prior_scale=0.001, n_changepoints=7)
-    prophet_model.fit(df_prophet)
-    future = prophet_model.make_future_dataframe(periods=forecast_horizon, freq='D', include_history=False)
-    forecast = prophet_model.predict(future)
-
-    # Прогноз ARIMA
-    arima_model = ARIMA(df['Price'], order=(8, 0, 9))
-    arima_result = arima_model.fit()
-    forecast_ar = arima_result.forecast(steps=forecast_horizon)
-    last_date = df.index[-1]
-    future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=forecast_horizon)
-    forecast_arima = pd.Series(forecast_ar, index=future_dates)
-
-    day_selected = st.slider("📅 День прогноза", min_value=1, max_value=forecast_horizon, value=1)
-    selected_forecast = forecast.iloc[day_selected - 1]['yhat']
-    selected_pred = forecast_arima.iloc[day_selected - 1]
-
-    st.subheader(f"📌 Прогноз на день {day_selected}")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Prophet", f"{round(selected_forecast, 2)} сомони")
-    with col2:
-        st.metric("ARIMA", f"{round(selected_pred, 2)} сомони")
-
-    st.subheader("📉 График сравнения")
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], name='Prophet', line=dict(color='royalblue')))
-    fig.add_trace(go.Scatter(x=future_dates, y=forecast_arima, name='ARIMA', line=dict(color='darkorange')))
-    fig.update_layout(title="Сравнение прогноза Prophet и ARIMA", xaxis_title="Дата", yaxis_title="Курс")
-    st.plotly_chart(fig, use_container_width=True)
