@@ -3,3 +3,4 @@ prophet
 pandas
 scikit-learn
 matplotlib
+statsmodels
