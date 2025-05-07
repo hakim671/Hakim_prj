@@ -114,6 +114,7 @@ elif page == "🔮 Прогнозирование":
     }))
 
 elif page == 'Сравнение моделей':
+    df.set_index('Date', inplace=True)
     day_selected = st.slider("День прогноза", min_value=1, max_value=w_hours, value=1)
     prophet_model = Prophet(daily_seasonality=False, yearly_seasonality=False,
                             changepoint_prior_scale=0.001, n_changepoints=7)
