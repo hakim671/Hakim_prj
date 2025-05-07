@@ -126,10 +126,10 @@ elif page == 'Сравнение моделей':
     # Прогноз с использованием ARIMA
     arima_model = ARIMA(df['Price'], order=(8, 0, 9))
     arima_result = arima_model.fit()
-    forecast = arima_result.forecast(steps=120)
+    forecast_ar = arima_result.forecast(steps=120)
     last_date = df.index[0]
     future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=120)
-    forecast_arima = pd.Series(forecast, index=future_dates)
+    forecast_arima = pd.Series(forecast_ar, index=future_dates)
     selected_pred = forecast_arima.iloc[day_selected - 1]
 
     # Вывод прогнозов на выбранный день
