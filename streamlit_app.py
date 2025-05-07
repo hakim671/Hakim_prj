@@ -115,28 +115,29 @@ elif page == "🔮 Прогнозирование":
 
 elif page == 'Сравнение моделей':
     day_selected = st.slider("День прогноза", min_value=1, max_value=w_hours, value=1)
-    
-    model = Prophet(daily_seasonality=False, yearly_seasonality=False, changepoint_prior_scale=0.001, n_changepoints=7)
-    model.fit(df_prophet)
-    future = model.make_future_dataframe(periods=w_hours, freq='D', include_history=False)
-    forecast = model.predict(future)
-    selected_forecast = forecast.iloc[day_selected - 1]
+    prophet_model = Prophet(daily_seasonality=False, yearly_seasonality=False,
+                            changepoint_prior_scale=0.001, n_changepoints=7)
+    prophet_model.fit(df_prophet)
+    future = prophet_model.make_future_dataframe(periods=w_hours, freq='D', include_history=False)
+    forecast = prophet_model.predict(future)
+    selected_forecast = forecast.iloc[day_selected - 1]['yhat']
 
-    model = ARIMA(df['Price'], order=(8, 0, 9))
-    result = model.fit()
-    preds = result.predict(dynamic=False)
-    selected_pred = preds.iloc[day_selected - 1]
+    # Прогноз с использованием ARIMA
+    arima_model = ARIMA(df['Price'], order=(8, 0, 9))
+    arima_result = arima_model.fit()
+    arima_preds = arima_result.predict()
+    selected_pred = arima_preds.iloc[day_selected - 1]
 
-        # Отображаем выбранные значения
+    # Вывод прогнозов на выбранный день
     st.subheader(f"Прогноз на день {day_selected}")
-    st.write("**Prophet:**", round(selected_forecast['yhat'], 2))
-    st.write("**ARIMA:**", round(selected_pred, 2))
+    st.markdown(f"**Prophet:** {round(selected_forecast, 2)}")
+    st.markdown(f"**ARIMA:** {round(selected_pred, 2)}")
 
-    # Визуализация всего прогноза для сравнения
+    # Визуализация прогнозов
     st.subheader("Сравнение всех прогнозов")
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(forecast['ds'], forecast['yhat'], label='Prophet', color='blue')
-    ax.plot(df.index[:len(preds)], preds, label='ARIMA', color='orange')
+    ax.plot(df.index[:len(arima_preds)], arima_preds, label='ARIMA', color='orange')
     ax.set_xlabel('Дата')
     ax.set_ylabel('Цена')
     ax.legend()
