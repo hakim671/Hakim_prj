@@ -72,7 +72,7 @@ elif page == "🔮 Прогнозирование":
     st.title("🔮 Прогноз курса сомони/доллар")
     st.markdown("Модель **Prophet** предсказывает курс на ближайшие 120 дней.")
 
-    model = Prophet(daily_seasonality=False, yearly_seasonality=False, changepoint_prior_scale=0.001, n_changepoints=10)
+    model = Prophet(daily_seasonality=False, yearly_seasonality=False, changepoint_prior_scale=0.001, n_changepoints=14)
     model.fit(df_prophet)
     future = model.make_future_dataframe(periods=forecast_horizon, freq='D', include_history=False)
     forecast = model.predict(future)
